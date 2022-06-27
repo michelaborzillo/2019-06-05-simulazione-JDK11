@@ -5,9 +5,11 @@
 package it.polito.tdp.crimes;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import it.polito.tdp.crimes.model.Model;
+import it.polito.tdp.crimes.model.Vicino;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -25,7 +27,7 @@ public class FXMLController {
     private URL location;
 
     @FXML // fx:id="boxAnno"
-    private ComboBox<?> boxAnno; // Value injected by FXMLLoader
+    private ComboBox<Integer> boxAnno; // Value injected by FXMLLoader
 
     @FXML // fx:id="boxMese"
     private ComboBox<?> boxMese; // Value injected by FXMLLoader
@@ -47,7 +49,18 @@ public class FXMLController {
 
     @FXML
     void doCreaReteCittadina(ActionEvent event) {
+    		int anno= boxAnno.getValue();
+    		model.creaGrafo(anno);
+    		txtResult.appendText("Grafo creato con VERTCI: "+model.nVertici()+ " e ARCHI: "+model.nArchi()+"\n");
 
+    		for(Integer d : this.model.getVertici()) {
+    			List<Vicino> vicini = this.model.getAdiacenti(d);
+    			txtResult.appendText("\n\nVICINI DEL DISTRETTO: " + d + "\n");
+    			for(Vicino v : vicini)
+    				txtResult.appendText(v.getId() + " " + v.getPeso() + "\n");
+    		}
+    		
+    
     }
 
     @FXML
@@ -57,7 +70,7 @@ public class FXMLController {
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
     void initialize() {
-        assert boxAnno != null : "fx:id=\"boxAnno\" was not injected: check your FXML file 'Scene.fxml'.";
+        //assert boxAnno != null : "fx:id=\"boxAnno\" was not injected: check your FXML file 'Scene.fxml'.";
         assert boxMese != null : "fx:id=\"boxMese\" was not injected: check your FXML file 'Scene.fxml'.";
         assert boxGiorno != null : "fx:id=\"boxGiorno\" was not injected: check your FXML file 'Scene.fxml'.";
         assert btnCreaReteCittadina != null : "fx:id=\"btnCreaReteCittadina\" was not injected: check your FXML file 'Scene.fxml'.";
@@ -69,5 +82,7 @@ public class FXMLController {
     
     public void setModel(Model model) {
     	this.model = model;
+    	boxAnno.getItems().clear();
+    	boxAnno.getItems().addAll(model.getAnni());
     }
 }
